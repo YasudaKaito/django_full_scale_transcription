@@ -16,7 +16,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
-    from config.local_settings import *
+    from djangosnippets.config.local_settings import *
 except ImportError:
     pass
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "snippets.apps.SnippetsConfig",
 ]
 
 MIDDLEWARE = [
