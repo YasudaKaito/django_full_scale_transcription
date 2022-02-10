@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    image: dfs_app
+    container_name: dfs_app
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/opt/study/django_full_scale_transcription
+    tty: true
