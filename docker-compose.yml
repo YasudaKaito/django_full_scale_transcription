@@ -11,4 +11,28 @@ services:
       - 8000:8000
     volumes:
       - .:/opt/study/django_full_scale_transcription
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_NAME
+      - DB_USER
+      - DB_PASSWORD
+    depends_on:
+      - db
     tty: true
+
+  db:
+    image: postgres:14.1-alpine
+    container_name: dfs_db
+    environment:
+      LANG: ja_jp.utf8
+      LANGUAGE: ja_jp.utf8
+      LC_ALL: ja_jp.utf8
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - dfs_dbdata:/var/lib/postgresql/data
+
+volumes:
+  dfs_dbdata:
