@@ -3,7 +3,7 @@ from django.test import RequestFactory, TestCase
 from django.urls import resolve
 
 from snippets.models import Snippet
-from snippets.views import snippet_detail, snippet_edit, snippet_new, top
+from snippets.views import snippet_edit, snippet_new, top
 
 UserModel = get_user_model()
 
@@ -53,9 +53,28 @@ class CreateSnippetTest(TestCase):
 
 
 class SnippetDetailTest(TestCase):
-    def test_should_resolve_snippet_detail(self):
-        actual = resolve("/snippets/1/")
-        self.assertEqual(snippet_detail, actual.func)
+    # 各テストメソッドの直前に呼び出される
+    def setUp(self) -> None:
+        self.user = UserModel.objects.create(
+            username="test_user",
+            email="test@example.com",
+            password="secret",
+        )
+        self.snippet = Snippet.objects.create(
+            title="title1",
+            code="print('hello')",
+            description="description1",
+            created_by=self.user,
+        )
+
+    def test_use_expected_template(self):
+        res = self.client.get("/snippets/%s/" % self.snippet.id)
+        self.assertTemplateUsed(res, "snippets/snippet_detail.html")
+
+    def test_returns_200_and_expected_heading(self):
+        """スニペットのタイトルが含まれること"""
+        res = self.client.get("/snippets/%s/" % self.snippet.id)
+        self.assertContains(res, self.snippet.title, status_code=200)
 
 
 class EditSnippetTest(TestCase):

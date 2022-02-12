@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from snippets.models import Snippet
 
@@ -17,4 +17,5 @@ def snippet_edit(request, snippet_id):
 
 
 def snippet_detail(request, snippet_id):
-    pass
+    snippet = get_object_or_404(Snippet, pk=snippet_id)
+    return render(request, "snippets/snippet_detail.html", {"snippet": snippet})
