@@ -3,7 +3,7 @@ from django.test import RequestFactory, TestCase
 from django.urls import resolve
 
 from snippets.models import Snippet
-from snippets.views import snippet_edit, snippet_new, top
+from snippets.views import snippet_edit, top
 
 UserModel = get_user_model()
 
@@ -47,9 +47,24 @@ class TopPageRenderSnippetsTest(TestCase):
 
 
 class CreateSnippetTest(TestCase):
-    def test_should_resolve_snippet_new(self):
-        actual = resolve("/snippets/new/")
-        self.assertEqual(snippet_new, actual.func)
+    def setUp(self) -> None:
+        self.user = UserModel.objects.create(
+            username="test_user",
+            email="test@example.com",
+            password="secret",
+        )
+        self.client.force_login(self.user)
+
+    def test_render_creation_form(self):
+        res = self.client.get("/snippets/new/")
+        self.assertContains(res, "スニペットの登録", status_code=200)
+
+    def test_create_snippet(self):
+        data = {"title": "タイトル", "code": "コード", "description": "解説"}
+        self.client.post("/snippets/new/", data)
+        snippet = Snippet.objects.get(title="タイトル")
+        self.assertEqual("コード", snippet.code)
+        self.assertEqual("解説", snippet.description)
 
 
 class SnippetDetailTest(TestCase):
