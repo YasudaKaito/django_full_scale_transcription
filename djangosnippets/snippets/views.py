@@ -1,8 +1,11 @@
 from django.shortcuts import render
 
+from snippets.models import Snippet
+
 
 def top(request):
-    return render(request, "snippets/top.html")
+    snippets = Snippet.objects.all()
+    return render(request, "snippets/top.html", {"snippets": snippets})
 
 
 def snippet_new(request):

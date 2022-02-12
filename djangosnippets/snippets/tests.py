@@ -1,7 +1,11 @@
-from django.test import TestCase
+from django.contrib.auth import get_user_model
+from django.test import RequestFactory, TestCase
 from django.urls import resolve
 
-from snippets.views import snippet_detail, snippet_edit, snippet_new
+from snippets.models import Snippet
+from snippets.views import snippet_detail, snippet_edit, snippet_new, top
+
+UserModel = get_user_model()
 
 
 class TopPageTest(TestCase):
@@ -12,6 +16,34 @@ class TopPageTest(TestCase):
     def test_top_page_uses_expected_template(self):
         res = self.client.get("/")
         self.assertTemplateUsed(res, "snippets/top.html")
+
+
+class TopPageRenderSnippetsTest(TestCase):
+    def setUp(self) -> None:
+        self.user = UserModel.objects.create(
+            username="test_user",
+            email="test@example.com",
+            password="top_secret_pass0001",
+        )
+        self.snippet = Snippet.objects.create(
+            title="title1",
+            code="print('hello')",
+            description="description1",
+            created_by=self.user,
+        )
+
+    def test_return_snippet_title(self):
+        """作成したスニペットのタイトルが含まれること"""
+        req = RequestFactory().get("/")
+        req.user = self.user
+        res = top(req)
+        self.assertContains(res, self.snippet.title)
+
+    def test_return_username(self):
+        req = RequestFactory().get("/")
+        req.user = self.user
+        res = top(req)
+        self.assertContains(res, self.user.username)
 
 
 class CreateSnippetTest(TestCase):
