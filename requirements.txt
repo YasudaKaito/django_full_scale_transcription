@@ -1,0 +1,7 @@
+django==3.2
+django-bootstrap5~=21.3
+django-pygments-renderer
+psycopg2~=2.9.3
+black
+flake8
+isort
