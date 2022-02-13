@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
 from snippets.forms import SnippetForm
@@ -18,14 +19,26 @@ def snippet_new(request):
             snippet = form.save(commit=False)
             snippet.created_by = request.user
             snippet.save()
-            return redirect(snippet_detail, snippet_id=snippet.pk)
+            return redirect("snippet_detail", snippet_id=snippet.pk)
     else:
         form = SnippetForm()
     return render(request, "snippets/snippet_new.html", {"form": form})
 
 
+@login_required
 def snippet_edit(request, snippet_id):
-    pass
+    snippet = get_object_or_404(Snippet, pk=snippet_id)
+    if snippet.created_by_id != request.user.id:
+        return HttpResponseForbidden("このスニペットの編集は許可されていません。")
+    if request.method == "POST":
+        form = SnippetForm(request.POST, instance=snippet)
+        if form.is_valid():
+            form.save()
+            return redirect("snippet_detail", snippet_id=snippet.pk)
+    else:
+        # instance 引数にわたすことでデフォルト値を埋めたHTMLを返す
+        form = SnippetForm(instance=snippet)
+    return render(request, "snippets/snippet_edit.html", {"form": form})
 
 
 def snippet_detail(request, snippet_id):
