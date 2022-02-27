@@ -3,6 +3,9 @@ from django.db import models
 
 
 class Snippet(models.Model):
+    class Meta:
+        db_table = "snippets"
+
     title = models.CharField("タイトル", max_length=128)
     # フォームフィールドの空の値のエントリーを許容
     # https://docs.djangoproject.com/ja/3.2/ref/models/fields/#blank
