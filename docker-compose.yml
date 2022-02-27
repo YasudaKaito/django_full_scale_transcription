@@ -19,21 +19,23 @@ services:
       - DB_USER
       - DB_PASSWORD
     depends_on:
-      - db
+      - mysqldb
     # tty: true
 
-  db:
-    image: postgres:14.1-alpine
-    container_name: dfs_db
+  mysqldb:
+    container_name: dfs_mysqldb
+    build:
+      context: .
+      dockerfile: ./docker/db_mysql/Dockerfile
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      LANG: ja_jp.utf8
-      LANGUAGE: ja_jp.utf8
-      LC_ALL: ja_jp.utf8
-      POSTGRES_DB: $DB_NAME
-      POSTGRES_USER: $DB_USER
-      POSTGRES_PASSWORD: $DB_PASSWORD
+      # root ユーザは接続に使用しないが、指定がないと mysql を起動できない
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_NAME
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASSWORD
     volumes:
-      - dfs_dbdata:/var/lib/postgresql/data
+      - dfs_mysqldb_data:/var/lib/mysql
 
 volumes:
-  dfs_dbdata:
+  dfs_mysqldb_data:
