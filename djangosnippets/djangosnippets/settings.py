@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_bootstrap5",
     "pygments_renderer",
     "accounts.apps.AccountsConfig",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,18 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+        }
+    },
+    "loggers": {"django.db.backends": {"level": "DEBUG", "handlers": ["console"]}},
+}
 
 # authentication
 LOGIN_URL = "/accounts/login/"
