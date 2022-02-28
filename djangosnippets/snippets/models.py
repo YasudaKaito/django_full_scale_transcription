@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Snippet(models.Model):
@@ -16,7 +17,7 @@ class Snippet(models.Model):
         settings.AUTH_USER_MODEL, verbose_name="投稿者", on_delete=models.CASCADE
     )
     # オブジェクトが最初に作成されたときに自動で現在を設定
-    created_at = models.DateTimeField("投稿日", auto_now_add=True)
+    created_at = models.DateTimeField(_("Created at"), db_index=True, auto_now_add=True)
     # オブジェクトが保存されるたび自動で現在を設定
     # https://docs.djangoproject.com/ja/3.2/ref/models/fields/#datefield
     updated_at = models.DateTimeField("更新日", auto_now=True)
